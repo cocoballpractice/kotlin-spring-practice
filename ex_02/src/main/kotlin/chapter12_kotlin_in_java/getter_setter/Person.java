@@ -1,0 +1,41 @@
+package chapter12_kotlin_in_java.getter_setter;
+
+import java.util.UUID;
+
+public class Person {
+
+    private String name;
+
+    private int age;
+
+    private String address;
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String myAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getUUID() {
+        return UUID.randomUUID().toString();
+    }
+}
