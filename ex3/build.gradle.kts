@@ -24,6 +24,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.ninja-squad:springmockk:3.1.1") // 의존성 추가
 }
 
 tasks.withType<KotlinCompile> {
