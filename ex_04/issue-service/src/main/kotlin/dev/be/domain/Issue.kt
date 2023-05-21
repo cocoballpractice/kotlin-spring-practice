@@ -9,30 +9,33 @@ import javax.persistence.*
 @Table
 class Issue(
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long? = null,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null,
 
-        @Column
-        var userId : Long,
+    @Column
+    var userId: Long,
 
-        @Column
-        var summary : String,
+    @OneToMany(fetch = FetchType.EAGER)
+    val comments : MutableList<Comment> = mutableListOf(),
 
-        @Column
-        var description : String,
+    @Column
+    var summary: String,
 
-        @Column
-        @Enumerated(EnumType.STRING)
-        var type : IssueType,
+    @Column
+    var description: String,
 
-        @Column
-        @Enumerated(EnumType.STRING)
-        var priority : IssuePriority,
+    @Column
+    @Enumerated(EnumType.STRING)
+    var type: IssueType,
 
-        @Column
-        @Enumerated(EnumType.STRING)
-        var status: IssueStatus,
+    @Column
+    @Enumerated(EnumType.STRING)
+    var priority: IssuePriority,
 
-) : BaseEntity() {
+    @Column
+    @Enumerated(EnumType.STRING)
+    var status: IssueStatus,
+
+    ) : BaseEntity() {
 }

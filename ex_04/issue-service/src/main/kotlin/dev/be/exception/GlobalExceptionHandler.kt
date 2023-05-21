@@ -11,21 +11,21 @@ class GlobalExceptionHandler {
     private val logger = KotlinLogging.logger {}
 
     @ExceptionHandler(ServerException::class)
-    fun handleServerException(ex : ServerException) : ErrorResponse {
+    fun handleServerException(ex: ServerException): ErrorResponse {
         logger.error { ex.message }
 
         return ErrorResponse(code = ex.code, message = ex.message)
     }
 
     @ExceptionHandler(TokenExpiredException::class)
-    fun handleTokenExpiredException(ex : TokenExpiredException) : ErrorResponse {
+    fun handleTokenExpiredException(ex: TokenExpiredException): ErrorResponse {
         logger.error { ex.message }
 
         return ErrorResponse(code = 401, message = "Token Expired Error")
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleException(ex : Exception) : ErrorResponse {
+    fun handleException(ex: Exception): ErrorResponse {
         logger.error { ex.message } // 로그 상에서만 stack trace 확인하도록
 
         return ErrorResponse(code = 500, message = "Internal Server Error")

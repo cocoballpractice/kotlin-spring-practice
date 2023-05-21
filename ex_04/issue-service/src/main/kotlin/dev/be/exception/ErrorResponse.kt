@@ -1,6 +1,6 @@
 package dev.be.exception
 
 data class ErrorResponse(
-        val code : Int,
-        val message : String,
+    val code: Int,
+    val message: String,
 )
