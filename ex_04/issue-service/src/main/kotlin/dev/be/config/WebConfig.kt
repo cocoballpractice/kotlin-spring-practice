@@ -1,5 +1,9 @@
 package dev.be.config
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import dev.be.exception.UnauthorizedException
+import kotlinx.coroutines.runBlocking
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
@@ -7,12 +11,14 @@ import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport
 
 // 인증 관련 세팅
 @Configuration
 class WebConfig(
-        private val authUserHandlerArgumentResolver: AuthUserHandlerArgumentResolver,
+    private val authUserHandlerArgumentResolver: AuthUserHandlerArgumentResolver,
 ) : WebMvcConfigurationSupport() {
 
     override fun addArgumentResolvers(argumentResolvers: MutableList<HandlerMethodArgumentResolver>) {
@@ -23,27 +29,46 @@ class WebConfig(
 }
 
 @Component
-class AuthUserHandlerArgumentResolver : HandlerMethodArgumentResolver {
+class AuthUserHandlerArgumentResolver(
+    @Value("\${auth.url}") val authUrl: String,
+) : HandlerMethodArgumentResolver {
     override fun supportsParameter(parameter: MethodParameter): Boolean =
-            AuthUser::class.java.isAssignableFrom(parameter.parameterType)
+        AuthUser::class.java.isAssignableFrom(parameter.parameterType)
 
     override fun resolveArgument(
-            parameter: MethodParameter,
-            mavContainer: ModelAndViewContainer?,
-            webRequest: NativeWebRequest,
-            binderFactory: WebDataBinderFactory?
+        parameter: MethodParameter,
+        mavContainer: ModelAndViewContainer?,
+        webRequest: NativeWebRequest,
+        binderFactory: WebDataBinderFactory?
     ): Any? {
 
+        val authHeader : String = webRequest.getHeader("Authorization") ?: throw UnauthorizedException()
+
+        return runBlocking {
+            WebClient.create()
+                .get()
+                .uri(authUrl)
+                .header("Authorization", authHeader) // Bear asdasdasd....
+                .retrieve()
+                .awaitBody<AuthUser>()
+        }
+
+
+        /*
         return AuthUser(
-                userId = 1,
-                username = "테스트"
+            userId = 1,
+            username = "테스트"
         )
+
+         */
 
     }
 }
 
 data class AuthUser(
-        val userId: Long,
-        val username: String,
-        val profileUrl: String? = null,
+    @JsonProperty("id")
+    val userId: Long,
+    val username: String,
+    val email: String,
+    val profileUrl: String? = null,
 )
